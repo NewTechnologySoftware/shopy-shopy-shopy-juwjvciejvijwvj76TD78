@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8" />
+    <title>IEOTW – Login Alenar336</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #16a34a;
+            --secondary-dark: #15803d;
+            --danger: #dc2626;
+            --danger-dark: #b91c1c;
+            --gray: #9ca3af;
+            --gray-dark: #4b5563;
+            --text: #f9fafb;
+            --muted: #9ca3af;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #1e293b 0, #020617 55%, #000 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px 12px 40px;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 1200px;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.98));
+            border-radius: 28px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.9);
+            padding: 20px 20px 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hidden { display: none !important; }
+
+        h1, h2, h3 { margin-top: 0; }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 999px;
+            padding: 9px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.18s ease-out;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-dark);
+            color: var(--muted);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), var(--danger-dark));
+            color: white;
+        }
+
+        .btn-sm { padding: 6px 10px; font-size: 12px; }
+
+        .input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-dark);
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.7);
+        }
+
+        .offer-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 16px;
+            padding: 14px 14px 12px;
+            margin-bottom: 10px;
+        }
+
+        .offer-card h3 { margin-bottom: 4px; font-size: 16px; }
+
+        .offer-meta {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .offer-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.96);
+            color: var(--muted);
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            padding: 16px;
+        }
+
+        .modal-backdrop.active { display: flex; }
+
+        .modal {
+            background: #0f172a;
+            border-radius: 20px;
+            padding: 18px 18px 16px;
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid rgba(148,163,184,0.3);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content-scroll { overflow-y: auto; }
+
+        .modal h2 { margin-top: 0; margin-bottom: 8px; }
+
+        .modal p { font-size: 14px; color: var(--muted); }
+
+        .modal-footer {
+            margin-top: 14px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .reviews-list {
+            max-height: 220px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(148,163,184,0.3);
+            padding: 8px;
+            margin-top: 8px;
+            background: rgba(15,23,42,0.7);
+        }
+
+        .review-item {
+            border-bottom: 1px solid rgba(148,163,184,0.2);
+            padding: 6px 0;
+            font-size: 13px;
+        }
+
+        .review-item:last-child { border-bottom: none; }
+
+        .review-stars { color: gold; font-size: 13px; }
+
+        .seller-offer {
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(148,163,184,0.2);
+        }
+
+        .seller-offer:last-child { border-bottom: none; }
+
+        .star {
+            font-size: 26px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .star.active { color: gold; }
+
+        .error-text {
+            font-size: 12px;
+            color: #fecaca;
+            margin-top: 4px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-pill {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148,163,184,0.4);
+            background: rgba(15,23,42,0.96);
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .user-pill span.icon { font-size: 16px; }
+
+        .small-muted { font-size: 12px; color: var(--muted); }
+
+        .link {
+            color: #93c5fd;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .link:hover { text-decoration: underline; }
+
+        /* Success feedback animation class */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 640px) {
+            .app-shell {
+                padding: 18px 14px 24px;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-shell">
+
+    <div id="view-main">
+        <div class="top-bar">
+            <h1>IEOTW Shop: IT Electronics Of The World via NTS</h1>
+            <div id="user-info" class="user-pill">
+                <span class="icon">👤</span>
+                <span id="user-name-label">Alena</span>
+            </div>
+        </div>
+        <hr>
+        <p class="small-muted">Zobrazují se všechny nabídky ze všech registrovaných Shopů z celého světa. Nabídky již do 300 Kč! Pokud zde nevidíte žádné nabídky, zkuste stránku aktualizovat. Pokud to nepomůže, je chyba na naší straně nebo nikdo nic neprodává...</p>
+	<p>Provozovatel: NTS E-Commerce Company Ltd. IT Electronics, Copyright NTS</p>
+        <h2>Nabídky:</h2>
+        <div id="offers-container"></div>
+    </div>
+
+    <div id="modal-offer-detail" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-content-scroll">
+                <h2 id="detail-title"></h2>
+                <p id="detail-desc"></p>
+                <p><strong>Cena:</strong> <span id="detail-price"></span> CZK</p>
+                <p><strong>Kusů skladem:</strong> <span id="detail-qty"></span></p>
+                <p><strong>Foto:</strong> <span id="detail-photo"></span></p>
+
+                <p>
+                    <strong>Prodává:</strong>
+                    <span id="detail-shop" class="link"></span>
+                    <span id="detail-flag"></span>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-buy" class="btn btn-secondary">Koupit</button>
+                <button class="btn btn-outline" onclick="closeModal('modal-offer-detail')">Zavřít</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-buy-step1" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-content-scroll">
+                <h2>Základní informace o Vás</h2>
+                <p>Vaše jméno: <strong id="buy-username"></strong></p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-buy-step1-back" class="btn btn-outline">Zpět</button>
+                <button id="btn-buy-step1-next" class="btn btn-primary">Další</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-buy-step2" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-content-scroll">
+                <h2>Zvolte dopravu</h2>
+                <p>
+                    Při registraci jste zadali lokalitu Dub nad Moravou a zvolili přepravu na výdejní místo:
+                    <strong>Balíkovna na poště Dub nad Moravou náměstí</strong>.  
+                    Doprava Balíkovna Partner ZDARMA.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-buy-step2-next" class="btn btn-primary">Potvrdit</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-buy-step3" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-content-scroll">
+                <h2>Kolik kusů chcete objednat?</h2>
+                <div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-top:10px;">
+                    <button id="btn-minus" class="btn btn-outline">-</button>
+                    <span id="buy-count" style="font-size:28px;">1</span>
+                    <button id="btn-plus" class="btn btn-outline">+</button>
+                </div>
+                <p id="buy-warning" class="error-text" style="display:none;"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-buy-confirm" class="btn btn-secondary">Závazně objednat</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-buy-success" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-content-scroll">
+                <h2>Máte objednáno!</h2>
+                <p>
+                    Dokončili jste objednávku. Další informace byste měli co nejdříve obdržet e-mailem na Váš e-mail...
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('modal-buy-success')">Zavřít</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-seller" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-content-scroll">
+                <h2 id="seller-name"></h2>
+                <p id="seller-desc" style="font-style: italic; color: #cbd5e1; margin-bottom: 12px;"></p>
+                
+                <div class="small-muted" style="margin-bottom: 12px; background: rgba(0,0,0,0.2); padding: 6px 10px; border-radius: 8px;">
+                    <div><strong>IČ:</strong> <span id="seller-ic">-</span></div>
+                    <div><strong>DIČ:</strong> <span id="seller-dic">-</span></div>
+                    <div><strong>SID:</strong> <span id="seller-sid">-</span></div>
+                </div>
+
+                <p id="seller-warning"></p>
+
+                <h3>Recenze</h3>
+                <p>Průměr: <span id="seller-rating"></span> ⭐</p>
+                <div class="modal-footer" style="justify-content:flex-start;margin-top:4px;">
+                    <button id="btn-show-reviews" class="btn btn-outline btn-sm">Ukázat recenze prodejce</button>
+                    <button id="btn-add-review" class="btn btn-secondary btn-sm">Zadat recenzi</button>
+                </div>
+
+                <div id="seller-reviews" class="reviews-list hidden"></div>
+
+                <hr>
+
+                <h3>Zadat recenzi</h3>
+                <textarea id="seller-review-text" class="input" style="min-height:70px;"></textarea>
+                <div style="margin-top:6px;">
+                    <span class="star" data-star="1">★</span>
+                    <span class="star" data-star="2">★</span>
+                    <span class="star" data-star="3">★</span>
+                    <span class="star" data-star="4">★</span>
+                    <span class="star" data-star="5">★</span>
+                </div>
+                <div id="seller-review-error" class="error-text hidden">Zadejte text recenze a označte hvězdy.</div>
+
+                <h3 style="margin-top:14px;">Máte u tohoto prodejce podezření na podvod?</h3>
+                <label><input type="radio" name="fraud" value="ne" checked> Ne</label>
+                <label><input type="radio" name="fraud" value="ano"> Ano</label>
+
+                <div id="fraud-extra" class="hidden" style="margin-top:8px;">
+                    <p>
+                        Chcete nahlásit tohoto prodejce jako podvodníka, prodejce, který porušuje bezpečnostní zásady,
+                        zasílá padělky, nebo nezašle zboží? Tímto prodejce označíte pro všechny ostatní uživatele jako
+                        rizikového a nahlásíte jej nám do administrace a my jej podrobně prověříme. Pokud jste byli 				podvedeni, po prošetření Vás kontaktujeme a vyřídíme refundanaci peněz...
+                    </p>
+                    <button id="btn-fraud-report" class="btn btn-danger btn-sm">Nahlásit</button>
+                </div>
+
+                <div class="modal-footer" style="justify-content:flex-start;margin-top:10px;">
+                    <button id="btn-publish-review" class="btn btn-secondary btn-sm">Publikovat recenzi</button>
+                </div>
+
+                <hr>
+
+                <h3>Nabídky tohoto prodejce</h3>
+                <div id="seller-offers" style="max-height:200px;overflow-y:auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('modal-seller')">Zavřít</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+        getDatabase,
+        ref,
+        push,
+        set,
+        update,
+        onValue,
+        get
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnlhHEc37LyL-sJUxktc5pU3H9LwauNGM",
+        authDomain: "ieodw-1c69b.firebaseapp.com",
+        databaseURL: "https://ieodw-1c69b-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "ieodw-1c69b",
+        storageBucket: "ieodw-1c69b.firebasestorage.app",
+        messagingSenderId: "187816901876",
+        appId: "1:187816901876:web:e5e44d05a17b9259d9b2a1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Removed login view variables
+    const viewMain = document.getElementById("view-main");
+    const offersContainer = document.getElementById("offers-container");
+
+    const userNameLabel = document.getElementById("user-name-label");
+    const buyUsername = document.getElementById("buy-username");
+    const buyCountEl = document.getElementById("buy-count");
+    const buyWarning = document.getElementById("buy-warning");
+
+    const detailTitle = document.getElementById("detail-title");
+    const detailDesc = document.getElementById("detail-desc");
+    const detailPrice = document.getElementById("detail-price");
+    const detailQty = document.getElementById("detail-qty");
+    const detailPhoto = document.getElementById("detail-photo"); // NEW
+    const detailShop = document.getElementById("detail-shop");
+    const detailFlag = document.getElementById("detail-flag");
+
+    const sellerNameEl = document.getElementById("seller-name");
+    const sellerDescEl = document.getElementById("seller-desc");
+    const sellerWarningEl = document.getElementById("seller-warning");
+    const sellerRatingEl = document.getElementById("seller-rating");
+    const sellerReviewsEl = document.getElementById("seller-reviews");
+    const sellerOffersEl = document.getElementById("seller-offers");
+    const sellerReviewText = document.getElementById("seller-review-text");
+    const sellerReviewError = document.getElementById("seller-review-error");
+    const fraudExtra = document.getElementById("fraud-extra");
+
+    // Hardcoded user for auto-login
+    let currentUser = "Alena Rudolfská";
+    let currentUserUsername = "alena.rudolfska";
+    
+    let selectedOffer = null;
+    let selectedShopId = null;
+    let selectedOfferId = null;
+    let buyCount = 1;
+    let maxAvailable = 1;
+    let currentShopData = null;
+    let currentReviewStars = 0;
+
+    // Initial Load
+    userNameLabel.textContent = "Alena";
+    loadOffers();
+
+    function openModal(id) {
+        document.getElementById(id).classList.add("active");
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove("active");
+        // Clear any success messages when closing
+        document.querySelectorAll('.success-msg').forEach(e => e.remove());
+    }
+
+    window.closeModal = closeModal;
+
+    function loadOffers() {
+        const shopsRef = ref(db, "shops");
+        onValue(shopsRef, (snapshot) => {
+            offersContainer.innerHTML = "";
+            if (!snapshot.exists()) return;
+
+            const shops = snapshot.val();
+
+            Object.entries(shops).forEach(([shopId, shop]) => {
+                if (!shop.offers) return;
+
+                Object.entries(shop.offers).forEach(([offerId, offer]) => {
+                    const card = document.createElement("div");
+                    card.className = "offer-card";
+
+                    const flagIcon =
+                        shop.Nahlaseni === "Nahlaseno"
+                            ? "⚠️"
+                            : shop.Nahlaseni === "Proslo"
+                            ? "🟢"
+                            : "";
+
+                    card.innerHTML = `
+                        <h3>${offer.Nazev_nabidky}</h3>
+                        <div class="offer-meta">
+                            Prodává: <span class="link seller-link">${shop.Nazev_Shopu}</span> ${flagIcon}
+                        </div>
+                        <div class="offer-footer">
+                            <span class="badge">Cena: ${offer.Cena || "neuvedeno"} CZK</span>
+                            <span class="badge" style="margin-left:4px;">${offer.Pocet_kusu || 0} ks</span>
+                            <button class="btn btn-primary btn-sm" style="margin-left:auto;">Zobrazit podrobnosti</button>
+                        </div>
+                    `;
+
+                    const btnDetail = card.querySelector("button");
+                    const sellerLink = card.querySelector(".seller-link");
+
+                    btnDetail.addEventListener("click", () => {
+                        selectedOffer = offer;
+                        selectedShopId = shopId;
+                        selectedOfferId = offerId;
+                        currentShopData = shop;
+
+                        detailTitle.textContent = offer.Nazev_nabidky;
+                        detailDesc.textContent = offer.Popis || "";
+                        detailPrice.textContent = offer.Cena || ""; // Added CZK in HTML structure
+                        detailQty.textContent = offer.Pocet_kusu || 0;
+                        detailShop.textContent = shop.Nazev_Shopu || "";
+                        detailFlag.textContent = flagIcon;
+
+                        // NEW: Logic for photo display
+                        if (offer.Mame_foto && offer.Odkaz_na_foto) {
+                            detailPhoto.innerHTML = `<a href="${offer.Odkaz_na_foto}" target="_blank" class="link">Otevřít foto v novém okně</a>`;
+                        } else {
+                            detailPhoto.textContent = "Prodejce neposkytl foto";
+                        }
+
+                        maxAvailable = Number(offer.Pocet_kusu || 0);
+                        openModal("modal-offer-detail");
+                    });
+
+                    sellerLink.addEventListener("click", () => {
+                        openSellerProfile(shopId, shop);
+                    });
+
+                    offersContainer.appendChild(card);
+                });
+            });
+        });
+    }
+
+    document.getElementById("btn-buy").addEventListener("click", () => {
+        closeModal("modal-offer-detail");
+        buyUsername.textContent = currentUser;
+        openModal("modal-buy-step1");
+    });
+
+    document.getElementById("btn-buy-step1-back").addEventListener("click", () => {
+        closeModal("modal-buy-step1");
+        openModal("modal-offer-detail");
+    });
+
+    document.getElementById("btn-buy-step1-next").addEventListener("click", () => {
+        closeModal("modal-buy-step1");
+        openModal("modal-buy-step2");
+    });
+
+    document.getElementById("btn-buy-step2-next").addEventListener("click", () => {
+        closeModal("modal-buy-step2");
+        buyCount = 1;
+        buyCountEl.textContent = "1";
+        buyWarning.style.display = "none";
+        openModal("modal-buy-step3");
+    });
+
+    document.getElementById("btn-minus").addEventListener("click", () => {
+        buyCount--;
+        if (buyCount < 1) {
+            buyCount = 1;
+            buyWarning.textContent = "Minimální počet kusů, který lze závazně koupit je 1!";
+            buyWarning.style.display = "block";
+        } else {
+            buyWarning.style.display = "none";
+        }
+        buyCountEl.textContent = String(buyCount);
+    });
+
+    document.getElementById("btn-plus").addEventListener("click", () => {
+        buyCount++;
+        if (buyCount > maxAvailable) {
+            buyCount = maxAvailable;
+            buyWarning.textContent = "Prodejce neumožňuje nákup více kusů!";
+            buyWarning.style.display = "block";
+        } else {
+            buyWarning.style.display = "none";
+        }
+        buyCountEl.textContent = String(buyCount);
+    });
+
+    document.getElementById("btn-buy-confirm").addEventListener("click", async () => {
+        if (!selectedShopId || !selectedOfferId || !selectedOffer) return;
+
+        const shopRef = ref(db, `shops/${selectedShopId}`);
+        const offerRef = ref(db, `shops/${selectedShopId}/offers/${selectedOfferId}`);
+        const ordersRef = ref(db, `shops/${selectedShopId}/orders`);
+
+        const offerSnap = await get(offerRef);
+        if (!offerSnap.exists()) {
+            closeModal("modal-buy-step3");
+            return;
+        }
+        const offer = offerSnap.val();
+        const currentQty = Number(offer.Pocet_kusu || 0);
+        const finalCount = Math.min(buyCount, currentQty > 0 ? currentQty : 0);
+
+        if (finalCount < 1) {
+            buyWarning.textContent = "Minimální počet kusů, který lze závazně koupit je 1!";
+            buyWarning.style.display = "block";
+            buyCount = 1;
+            buyCountEl.textContent = "1";
+            return;
+        }
+
+        const newQty = currentQty - finalCount;
+        await update(offerRef, {
+            Pocet_kusu: newQty < 0 ? 0 : newQty
+        });
+
+        const newOrderRef = push(ordersRef);
+        await set(newOrderRef, {
+            Objednavka: 1,
+            Nazev_nabidky: offer.Nazev_nabidky || "",
+            Pocet_kusu: offer.Pocet_kusu || 0,
+            Cena: offer.Cena || "",
+            Popis: offer.Popis || "",
+            Mame_foto: offer.Mame_foto || false,
+            Odkaz_na_foto: offer.Odkaz_na_foto || "",
+            Objednano_kusu: finalCount,
+            Objednatel: currentUser,
+            Zpusob_doruceni: "Balíkovna na poště Dub nad Moravou náměstí – Balíkovna Partner ZDARMA",
+            OfferId: selectedOfferId
+        });
+
+        await update(shopRef, {
+            Blokace_objednavky: 1
+        });
+
+        closeModal("modal-buy-step3");
+        openModal("modal-buy-success");
+    });
+
+    detailShop.addEventListener("click", () => {
+        if (selectedShopId && currentShopData) {
+            openSellerProfile(selectedShopId, currentShopData);
+        }
+    });
+
+    async function openSellerProfile(shopId, shop) {
+        sellerNameEl.textContent = shop.Nazev_Shopu || "Shop";
+        sellerDescEl.textContent = shop.Popis_Shopu || "Bez popisu";
+
+        // Display IC, DIC, SID
+        document.getElementById('seller-ic').textContent = shop.IC || "Nevyplněno";
+        document.getElementById('seller-dic').textContent = shop.DIC || "Nevyplněno";
+        document.getElementById('seller-sid').textContent = shop.SID || "Nevyplněno";
+
+        if (shop.Nahlaseni === "Nahlaseno") {
+            sellerWarningEl.textContent =
+                "Varování: Tento Shop byl označen uživatelem nebo administrátorem jako potenciálně rizikový. Aktuálně jej prověřujeme, buďte opatrní při nákupu...";
+        } else if (shop.Nahlaseni === "Proslo") {
+            sellerWarningEl.textContent =
+                "Tento Shop nám byl nahlášen jako podvodný. Prodejce jsme řádně testovali a byl vyhodnocen jako bezpečný.";
+        } else {
+            sellerWarningEl.textContent = "";
+        }
+
+        const reviewsRef = ref(db, `shops/${shopId}/reviews`);
+        const reviewsSnap = await get(reviewsRef);
+        let avg = 0;
+        let count = 0;
+        sellerReviewsEl.innerHTML = "";
+
+        if (reviewsSnap.exists()) {
+            const reviews = reviewsSnap.val();
+            Object.values(reviews).forEach((r) => {
+                const stars = Number(r.Pocet_hvezd || 0);
+                avg += stars;
+                count++;
+
+                const item = document.createElement("div");
+                item.className = "review-item";
+                item.innerHTML = `
+                    <div class="review-stars">${"★".repeat(stars)}${"☆".repeat(5 - stars)}</div>
+                    <div>${r.text_recenze || ""}</div>
+                `;
+                sellerReviewsEl.appendChild(item);
+            });
+        }
+
+        sellerRatingEl.textContent = count > 0 ? (avg / count).toFixed(1) : "0.0";
+        sellerReviewsEl.classList.add("hidden");
+
+        sellerOffersEl.innerHTML = "";
+        if (shop.offers) {
+            Object.entries(shop.offers).forEach(([offerId, offer]) => {
+                const div = document.createElement("div");
+                div.className = "seller-offer";
+                div.textContent = offer.Nazev_nabidky || "Nabídka";
+                sellerOffersEl.appendChild(div);
+            });
+        } else {
+            sellerOffersEl.innerHTML = `<div class="small-muted">Žádné nabídky.</div>`;
+        }
+
+        sellerReviewText.value = "";
+        currentReviewStars = 0;
+        document.querySelectorAll("#modal-seller .star").forEach((s) => s.classList.remove("active"));
+        sellerReviewError.classList.add("hidden");
+        document.querySelectorAll('.success-msg').forEach(e => e.remove()); // Clear success msgs
+
+        document.querySelectorAll("input[name='fraud']").forEach((r) => {
+            if (r.value === "ne") r.checked = true;
+        });
+        fraudExtra.classList.add("hidden");
+
+        // Fraud Report Logic
+        document.getElementById("btn-fraud-report").onclick = async function() {
+            const shopRef = ref(db, `shops/${shopId}`);
+            await update(shopRef, { Nahlaseni: "Nahlaseno" });
+            sellerWarningEl.textContent =
+                "Varování: Tento Shop byl označen uživatelem nebo administrátorem jako potenciálně rizikový. Aktuálně jej prověřujeme, buďte opatrní při nákupu...";
+            
+            // Show checkmark feedback
+            if(!this.parentNode.querySelector('.success-msg')) {
+                this.insertAdjacentHTML('afterend', '<span class="success-msg fade-in" style="color:#4ade80; font-size:13px; margin-left:8px; display:inline-flex; align-items:center;">✅ Nahlášeno</span>');
+            }
+        };
+
+        // Review Publish Logic
+        document.getElementById("btn-publish-review").onclick = async function() {
+            const text = sellerReviewText.value.trim();
+            if (!text || !currentReviewStars) {
+                sellerReviewError.classList.remove("hidden");
+                return;
+            }
+            sellerReviewError.classList.add("hidden");
+
+            const fraudValue = Array.from(document.querySelectorAll("input[name='fraud']"))
+                .find((r) => r.checked)?.value || "ne";
+
+            const reviewsRef2 = ref(db, `shops/${shopId}/reviews`);
+            const newReviewRef = push(reviewsRef2);
+            await set(newReviewRef, {
+                text_recenze: text,
+                Pocet_hvezd: currentReviewStars,
+                createdAt: Date.now()
+            });
+
+            if (fraudValue === "ano") {
+                const shopRef = ref(db, `shops/${shopId}`);
+                await update(shopRef, { Nahlaseni: "Nahlaseno" });
+                sellerWarningEl.textContent =
+                    "Varování: Tento Shop byl označen uživatelem nebo administrátorem jako potenciálně rizikový. Aktuálně jej prověřujeme, buďte opatrní při nákupu...";
+            }
+
+            const reviewsSnap2 = await get(reviewsRef2);
+            let avg2 = 0;
+            let count2 = 0;
+            sellerReviewsEl.innerHTML = "";
+            if (reviewsSnap2.exists()) {
+                const reviews2 = reviewsSnap2.val();
+                Object.values(reviews2).forEach((r) => {
+                    const stars = Number(r.Pocet_hvezd || 0);
+                    avg2 += stars;
+                    count2++;
+                    const item = document.createElement("div");
+                    item.className = "review-item";
+                    item.innerHTML = `
+                        <div class="review-stars">${"★".repeat(stars)}${"☆".repeat(5 - stars)}</div>
+                        <div>${r.text_recenze || ""}</div>
+                    `;
+                    sellerReviewsEl.appendChild(item);
+                });
+            }
+            sellerRatingEl.textContent = count2 > 0 ? (avg2 / count2).toFixed(1) : "0.0";
+
+            sellerReviewText.value = "";
+            currentReviewStars = 0;
+            document.querySelectorAll("#modal-seller .star").forEach((s) => s.classList.remove("active"));
+            
+            // Show checkmark feedback
+            if(!this.parentNode.querySelector('.success-msg')) {
+                this.insertAdjacentHTML('afterend', '<span class="success-msg fade-in" style="color:#4ade80; font-size:13px; margin-left:8px; display:inline-flex; align-items:center;">✅ Recenze odeslána</span>');
+            }
+        };
+
+        openModal("modal-seller");
+    }
+
+    document.getElementById("btn-show-reviews").addEventListener("click", () => {
+        sellerReviewsEl.classList.toggle("hidden");
+    });
+
+    document.getElementById("btn-add-review").addEventListener("click", () => {
+        sellerReviewText.focus();
+    });
+
+    document.querySelectorAll("#modal-seller .star").forEach((starEl) => {
+        starEl.addEventListener("click", () => {
+            const val = Number(starEl.getAttribute("data-star"));
+            currentReviewStars = val;
+            document.querySelectorAll("#modal-seller .star").forEach((s) => {
+                const v = Number(s.getAttribute("data-star"));
+                if (v <= val) s.classList.add("active");
+                else s.classList.remove("active");
+            });
+            sellerReviewError.classList.add("hidden");
+        });
+    });
+
+    document.querySelectorAll("input[name='fraud']").forEach((r) => {
+        r.addEventListener("change", () => {
+            if (r.value === "ano" && r.checked) {
+                fraudExtra.classList.remove("hidden");
+            } else if (r.value === "ne" && r.checked) {
+                fraudExtra.classList.add("hidden");
+            }
+        });
+    });
+</script>
+</body>
+</html>
